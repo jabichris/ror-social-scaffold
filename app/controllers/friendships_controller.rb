@@ -1,26 +1,15 @@
 class FriendshipsController < ApplicationController
-  def create
-    @user = User.find(params[:id])
-    current_user.request_friend(@user)
-    redirect_to users_path(@user)
-    flash[:notice] = 'Success'
-  end
+  include UserHelper
 
-  def show
-    redirect_to users_path
+  def create
+    receiver_id = params[:receiver].to_i
+    Friendship.create(sender_id: current_user.id, receiver_id: receiver_id, status: 'pending')
+    redirect_to request_friendship_caller
   end
 
   def update
-    @user = User.find(params[:id])
-    current_user.confirm_friend(@user)
-    redirect_to users_path
-    flash[:notice] = 'You have a new friend!'
-  end
-
-  def destroy
-    @user = User.find(params[:id])
-    current_user.delete_friend(@user)
-    redirect_to users_path
-    flash[:notice] = 'Friend deleted'
+    f = Friendship.find(params[:id])
+    f.update(status: params[:status])
+    redirect_to users_notifications_path
   end
 end

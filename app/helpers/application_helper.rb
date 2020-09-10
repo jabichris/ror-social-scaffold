@@ -15,4 +15,8 @@ module ApplicationHelper
       link_to('Like!', post_likes_path(post_id: post.id), method: :post)
     end
   end
+
+  def can_request_friendship?(receiver_id)
+    Friendship.friendship(current_user.id, receiver_id).count.zero?
+  end
 end
